@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { skillGroups } from "@/lib/portfolioData";
 import Reveal from "./Reveal";
 import SectionHeading from "./SectionHeading";
@@ -9,22 +10,23 @@ export default function Skills() {
         <SectionHeading
           index="03"
           label="Skills"
-          title="Growth matrix"
-          blurb="Technical proficiency across the stack, tooling, and embedded systems. Node brightness reflects comfort level."
+          title="Skill matrix"
+          blurb="Technical proficiency across the stack, tooling, and embedded systems. Bars fill as you scroll into view."
         />
 
-        <div className="space-y-8">
+        <div className="grid md:grid-cols-2 gap-6">
           {skillGroups.map((group, gi) => (
             <Reveal key={group.category} delay={gi * 60}>
-              <div className="glass rounded-2xl p-6 sm:p-8">
+              <div className="glass rounded-2xl p-6 sm:p-7 h-full">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="font-mono text-xs text-primary/70">0{gi + 1}</span>
                   <h3 className="font-display text-lg font-semibold tracking-tight">{group.category}</h3>
                   <div className="flex-1 h-px bg-border/50" />
+                  <span className="font-mono text-xs text-muted-foreground">{group.skills.length}</span>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="space-y-4">
                   {group.skills.map((s) => (
-                    <SkillNode key={s.name} skill={s} />
+                    <SkillBar key={s.name} skill={s} />
                   ))}
                 </div>
               </div>
@@ -36,26 +38,45 @@ export default function Skills() {
   );
 }
 
-function SkillNode({ skill }) {
-  const size = 44 + (skill.level / 100) * 52; // 44px - 96px
-  const glow = 0.15 + (skill.level / 100) * 0.5;
-  const label = skill.level >= 85 ? "Expert" : skill.level >= 75 ? "Confident" : "Familiar";
+function SkillBar({ skill }) {
+  const ref = useRef(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShown(true);
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const label = skill.level >= 85 ? "Expert" : skill.level >= 75 ? "Confident" : skill.level >= 65 ? "Solid" : "Learning";
+
   return (
-    <div className="group relative flex flex-col items-center gap-2" title={`${skill.name} · ${skill.level}%`}>
-      <div
-        className="relative grid place-items-center rounded-full border transition-transform group-hover:scale-110"
-        style={{
-          width: `${size}px`,
-          height: `${size}px`,
-          borderColor: `rgba(163, 230, 53, ${0.2 + (skill.level / 100) * 0.4})`,
-          background: `radial-gradient(circle, rgba(163,230,53,${glow * 0.25}) 0%, transparent 70%)`,
-          boxShadow: `0 0 ${glow * 30}px rgba(163, 230, 53, ${glow})`,
-        }}
-      >
-        <span className="font-mono text-[10px] font-bold text-primary">{skill.name.slice(0, 2).toUpperCase()}</span>
+    <div ref={ref} className="group">
+      <div className="flex items-baseline justify-between gap-3 mb-1.5">
+        <span className="text-sm font-medium">{skill.name}</span>
+        <span className="font-mono text-[11px] text-muted-foreground whitespace-nowrap">
+          {label} · {skill.level}%
+        </span>
       </div>
-      <span className="text-xs text-muted-foreground text-center max-w-[88px] leading-tight">{skill.name}</span>
-      <span className="absolute -top-1 right-0 font-mono text-[9px] text-primary/60 opacity-0 group-hover:opacity-100 transition">{label}</span>
+      <div className="h-1.5 rounded-full bg-background/60 border border-border/40 overflow-hidden">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary transition-[width] duration-1000 ease-out"
+          style={{
+            width: shown ? `${skill.level}%` : 0,
+            boxShadow: shown ? "0 0 12px hsl(var(--primary) / 0.5)" : "none",
+          }}
+        />
+      </div>
     </div>
   );
 }

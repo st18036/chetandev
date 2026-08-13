@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Home from '@/pages/Home';
+import { ThemeProvider } from 'next-themes';
 // Add page imports here
 
 const AuthenticatedApp = () => {
@@ -34,6 +35,7 @@ const AuthenticatedApp = () => {
 function App() {
 
   return (
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
@@ -43,6 +45,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
+    </ThemeProvider>
   )
 }
 

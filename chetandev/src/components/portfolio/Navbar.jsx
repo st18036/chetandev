@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { personal } from "@/lib/portfolioData";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { label: "About", href: "#about" },
@@ -68,6 +69,7 @@ export default function Navbar() {
             </nav>
 
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <a
                 href={personal.cvUrl}
                 target="_blank"
