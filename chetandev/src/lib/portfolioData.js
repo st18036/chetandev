@@ -16,7 +16,7 @@ export const personal = {
 
   heroImage: heroImage,
 
-  cvUrl: "/Chetan_Dev_CV.pdf",
+  cvUrl: "/Resume.pdf",
 
   summary:
     "I'm a 23-year-old final-stage software engineering student at AUT — all coursework complete, now seeking an 800-hour industry internship to graduate. Across my degree I've shipped full-stack web applications, embedded systems, and a real-time computer vision system for an industry client. I bring a genuine interest in building things that work, a collaborative team ethic, and a strong ability to pick up new technologies quickly.",
